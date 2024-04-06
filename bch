@@ -1,0 +1,32 @@
+const BCHJS = require('@psf/bch-js');
+
+// 创建 Bitcoin Cash 客户端
+const bchjs = new BCHJS();
+
+// 设置发送者地址和私钥
+const senderAddress = 'SENDER_BCH_ADDRESS';
+const senderPrivateKey = 'SENDER_PRIVATE_KEY';
+
+// 设置接收者地址
+const recipientAddress = 'RECIPIENT_BCH_ADDRESS';
+
+// 设置转账金额（以 BCH 为单位）
+const amount = 0.01; // 0.01 BCH
+
+// 构造转账事务
+const transaction = {
+  from: senderAddress,
+  to: recipientAddress,
+  value: amount,
+  // 设置手续费（可选）
+  fee: 1, // 单位为 satoshi，1 satoshi = 0.00000001 BCH
+};
+
+// 发送转账
+bchjs.Electrumx.sendTx(senderPrivateKey, transaction)
+  .then((result) => {
+    console.log('Transaction sent. Transaction ID:', result);
+  })
+  .catch((error) => {
+    console.error('Error occurred:', error);
+  });
