@@ -1,0 +1,20 @@
+use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+use near_sdk::collections::Map;
+use near_sdk::{env, near_bindgen, AccountId, Balance};
+
+#[near_bindgen]
+#[derive(Default, BorshDeserialize, BorshSerialize)]
+pub struct Token {
+    pub balances: Map<AccountId, Balance>,
+}
+
+#[near_bindgen]
+impl Token {
+    #[init]
+    pub fn new(owner_id: AccountId) -> Self {
+        let mut this = Self::default();
+        this.balances.insert(&owner_id, &1000000000000000000000000); // 初始化拥有者账户的代币余额，这里设置为 1,000,000 个代币
+        this
+    }
+
+    pub fn transfer(&mut self,
