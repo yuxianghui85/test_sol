@@ -1,0 +1,43 @@
+import org.polkadot.api.ApiPromise;
+import org.polkadot.types.Address;
+import org.polkadot.types.DotAmount;
+import org.polkadot.types.Method;
+import org.polkadot.types.SignatureResult;
+import org.polkadot.types.TypeRegistry;
+import org.polkadot.utils.Utils;
+import org.polkadot.utils.crypto.Types;
+import org.polkadot.utils.crypto.Types.SignatureOptions;
+
+public class DotTransfer {
+
+    public static void main(String[] args) {
+        // 连接到 Polkadot 节点
+        ApiPromise api = ApiPromise.create();
+
+        // 发送方地址和私钥
+        Address senderAddress = new Address("sender_address");
+        Types.Bytes senderPrivateKey = Utils.hexToU8a("sender_private_key");
+
+        // 接收方地址
+        Address receiverAddress = new Address("receiver_address");
+
+        // 转账金额（以 DOT 为单位）
+        DotAmount amount = new DotAmount(1000); // 1000 DOT
+
+        try {
+            api.connectWs("wss://your-polkadot-node-endpoint/ws");
+
+            Method extrinsic = api.tx().balances().transfer(receiverAddress, amount);
+            SignatureOptions signOptions = new SignatureOptions(senderAddress, senderPrivateKey);
+
+            SignatureResult result = api.sign(extrinsic, TypeRegistry.Default, signOptions);
+            String txHash = api.submitAndWatch(result);
+
+            System.out.println("Transaction Hash: " + txHash);
+
+            api.disconnect();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
