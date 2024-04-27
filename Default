@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: MIT
+#![cfg_attr(not(test), no_std)]
+
+use near_sdk::{env, near_bindgen};
+use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+
+#[near_bindgen]
+#[derive(Default, BorshDeserialize, BorshSerialize)]
+pub struct SimpleStorage {
+    value: u32,
+}
+
+#[near_bindgen]
+impl SimpleStorage {
+    // 设置值
+    pub fn set_value(&mut self, new_value: u32) {
+        self.value = new_value;
+    }
+
+    // 获取值
+    pub fn get_value(&self) -> u32 {
+        self.value
+    }
+}
