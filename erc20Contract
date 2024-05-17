@@ -1,0 +1,56 @@
+const Web3 = require('web3');
+
+// 连接到以太坊节点
+const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+// 发送者地址和私钥
+const senderAddress = '0xYourSenderAddress';
+const privateKey = 'YOUR_PRIVATE_KEY';
+
+// 接收者地址和代币合约
+const recipientAddress = '0xRecipientAddress';
+const erc20ContractAddress = '0xYourERC20ContractAddress';
+
+// ERC-20 合约的 ABI
+const erc20Abi = [
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "transfer",
+        "outputs": [],
+        "type": "function"
+    }
+];
+
+// 创建 ERC-20 合约实例
+const erc20Contract = new web3.eth.Contract(erc20Abi, erc20ContractAddress);
+
+// 转账数量
+const transferAmount = web3.utils.toWei('100', 'ether');  // 100 个 ERC-20 代币
+
+// 构建交易
+const transferData = erc20Contract.methods.transfer(recipientAddress, transferAmount).encodeABI();
+
+const transaction = {
+    from: senderAddress,
+    to: erc20ContractAddress,
+    data: transferData,
+    gas: 60000,  // Gas 限额，ERC-20 通常需要更多 Gas
+    gasPrice: web3.utils.toWei('10', 'gwei'),  // Gas 价格
+    nonce: await web3.eth.getTransactionCount(senderAddress),  // 获取 nonce
+};
+
+// 签名并发送交易
+const signedTx = await web3.eth.accounts.signTransaction(transaction, privateKey);
+const txHash = await web3.eth.sendRawTransaction(signedTx.rawTransaction);
+
+console.log('ERC-20 转账成功，交易哈希:', txHash);
