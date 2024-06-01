@@ -1,0 +1,10 @@
+const address = '0xYourEthereumAddress';
+
+web3.eth.getBalance(address, (error, balance) => {
+    if (error) {
+        console.error('查询余额出错:', error);
+    } else {
+        const balanceInEth = web3.utils.fromWei(balance, 'ether');
+        console.log(`地址 ${address} 的余额是 ${balanceInEth} ETH`);
+    }
+});
